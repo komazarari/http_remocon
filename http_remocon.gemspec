@@ -11,7 +11,7 @@ Gem::Specification.new do |spec|
 
   spec.summary       = %q{Rack HTTP server to execute commands.}
   spec.description   = %q{Rack HTTP server to execute commands.}
-  spec.homepage      = "TBD"
+  spec.homepage      = "https://github.com/komazarari/http_remocon"
 
   spec.files         = `git ls-files -z`.split("\x0").reject { |f| f.match(%r{^(test|spec|features)/}) }
   spec.bindir        = "exe"
