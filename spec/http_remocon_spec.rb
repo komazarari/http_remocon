@@ -6,9 +6,12 @@ describe HttpRemocon do
     HttpRemocon::Application
   end
 
-  it 'says hello' do
-    get '/'
-    expect(last_response).to be_ok
-    expect(last_response.body).to eq 'hello'
+  describe 'GET /' do
+    it 'shows hello messege' do
+      get '/'
+      expect(last_response).to be_ok
+      expect(last_response.body).to match /Hello! \n-#{HttpRemocon}/
+    end
   end
 end
+

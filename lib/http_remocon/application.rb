@@ -2,8 +2,6 @@ require 'sinatra'
 require 'http_remocon/worker'
 require 'json'
 
-#require 'pry'
-
 module HttpRemocon
   class Application < Sinatra::Application
     configure do
@@ -11,11 +9,7 @@ module HttpRemocon
     end
 
     get '/' do
-      'hello'
-    end
-
-    get '/help' do
-      'hello'
+      "Hello! \n-#{HttpRemocon} #{HttpRemocon::VERSION}"
     end
 
     post '/exec' do
