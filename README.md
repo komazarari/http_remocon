@@ -1,8 +1,11 @@
 # HttpRemocon
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/http_remocon`. To experiment with that code, run `bin/console` for an interactive prompt.
+This is a HTTP interface to execute various commands from remote client.
 
-TODO: Delete this and the text above, and describe your gem
+Web における最も一般的なメッセージ交換の方法 - HTTP - によって、 HttpRemocon サーバにコマンドを実行させることができる。非同期に実行させる場合は結果を直接得ることはできない (本来 remo-con とはそういうものだ) が、必要であれば同期的に結果を受け取ることもできる。
+
+これは非常にシンプルに動作し簡単にコマンドを実行できるが、そのためセキュリティ上の取り扱いには十分に注意しなければならない。基本的には、グローバルなインターネットから直接アクセス可能な場所で使うべきではないし、特権ユーザで起動すべきでもない。
+
 
 ## Installation
 
@@ -22,7 +25,32 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Setup `config.ru` and
+
+    ## config.ru ##
+    require 'http_remocon'
+    run HttpRemocon::Application
+
+
+Rackup:
+
+    bundle exec rackup config.ru
+
+
+POST commands:
+
+    curl -X POST localhost:9292/exec -d '{ ["ls", "\$HOME"] }'
+
+It's scary! :<
+
+You should configure following access controls.
+
+### Access Controls
+
+#### Allow only pre-declared commands
+
+#### Limit a length of argments
+
 
 ## Development
 
