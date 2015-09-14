@@ -1,11 +1,14 @@
 require 'spec_helper'
 
 describe HttpRemocon do
-  it 'has a version number' do
-    expect(HttpRemocon::VERSION).not_to be nil
+
+  def app
+    HttpRemocon::Application
   end
 
-  it 'does something useful' do
-    expect(false).to eq(true)
+  it 'says hello' do
+    get '/'
+    expect(last_response).to be_ok
+    expect(last_response.body).to eq 'hello'
   end
 end

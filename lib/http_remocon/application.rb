@@ -11,7 +11,7 @@ module HttpRemocon
     end
 
     get '/' do
-      redirect to('/help')
+      'hello'
     end
 
     get '/help' do
