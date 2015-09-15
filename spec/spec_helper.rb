@@ -3,6 +3,7 @@ ENV['RACK_ENV'] = 'test'
 
 require 'http_remocon'
 require 'rack/test'
+require 'sucker_punch/testing/inline'
 require 'pry'
 
 RSpec.configure do |config|
