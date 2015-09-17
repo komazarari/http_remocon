@@ -9,31 +9,51 @@ module HttpRemocon
 #      set :locks, Hash.new { |h,k| h[k] = Mutex.new }
     end
 
+    before '/exec*' do
+      begin
+        @request_body = JSON.parse(request.body.read)
+      rescue JSON::ParserError => e
+        response.status = 400
+        @errors = [e.message]
+      end
+    end
+
     get '/' do
       "Hello! \n-#{HttpRemocon} #{HttpRemocon::VERSION}"
     end
 
     post '/exec' do
-      body = JSON.parse(request.body.read)
-      Worker.new.async.perform(body['commands'].join(' '))
+      if response.ok?
+        commands = @request_body['commands']
+        Worker.new.async.perform(commands.join(' '))
+      else
+        commands = nil
+      end
 
-#      response.status = status ? 200 : 500
-#      response.body = { status: response.status, body: out_err }.to_json
-
-      { status: 'ok', accepted: body['commands'], results: nil }.to_json
+      {
+        status: response.status, commands: commands,
+        results: nil,
+        errors: @errors,
+      }.to_json
     end
 
     post '/exec_sync' do
-      body = JSON.parse(request.body.read)
-      out, err, status = Worker.new.perform(body['commands'].join(' '))
+      if response.ok?
+        commands = @request_body['commands']
+        out, err, exitcode = Worker.new.perform(commands.join(' '))
+      else
+        commands = nil
+        out, err, exitcode = []
+      end
 
       {
-        status: 'ok', accepted: body['commands'],
+        status: response.status, commands: commands,
         results: {
           stdout: out,
           stderr: err,
-          status: status.to_i,
-        }
+          exitcode: exitcode && exitcode.to_i,
+        },
+        errors: @errors,
       }.to_json
     end
   end
