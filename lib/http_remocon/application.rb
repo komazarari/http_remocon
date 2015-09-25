@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'http_remocon/worker'
+require 'http_remocon/filter'
 require 'json'
 require 'pry'
 
@@ -10,21 +11,34 @@ module HttpRemocon
     end
 
     before '/exec*' do
+      @errors = []
       begin
         @request_body = JSON.parse(request.body.read)
       rescue JSON::ParserError => e
         response.status = 400
-        @errors = [e.message]
+        @errors << e.message
+      else
+        @request_commands = @request_body['commands']
+        cmd_filter = Filter::Commands.new(@request_commands, ->(cmds) { cmds.join(' ') })
+        unless cmd_filter.pass?
+          response.status = 403
+          @errors << cmd_filter.error_message
+        end
+        src_filter = Filter::SourceIP.new(request.ip)
+        unless src_filter.pass?
+          response.status = 403
+          @errors << src_filter.error_message
+        end
       end
     end
 
     get '/' do
-      "Hello! \n-#{HttpRemocon} #{HttpRemocon::VERSION}"
+      "Hello! \n- #{HttpRemocon} #{HttpRemocon::VERSION}"
     end
 
     post '/exec' do
       if response.ok?
-        commands = @request_body['commands']
+        commands = @request_commands
         Worker.new.async.perform(commands.join(' '))
       else
         commands = nil
@@ -39,7 +53,7 @@ module HttpRemocon
 
     post '/exec_sync' do
       if response.ok?
-        commands = @request_body['commands']
+        commands = @request_commands
         out, err, exitcode = Worker.new.perform(commands.join(' '))
       else
         commands = nil
