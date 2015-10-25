@@ -20,7 +20,9 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency "sinatra", "~> 1.0"
   spec.add_dependency "sucker_punch", "~> 1.0"
-#  spec.add_dependency "sinatra-contrib", "~> 1.0"
+  spec.add_dependency "sinatra-json_rpc"
+  spec.add_dependency "multi_json"
+  #  spec.add_dependency "sinatra-contrib", "~> 1.0"
 #  spec.add_dependency
 
   spec.add_development_dependency "bundler", "~> 1.10"
@@ -29,4 +31,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "rack-test"
   spec.add_development_dependency "guard-rspec"
   spec.add_development_dependency "pry"
+  spec.add_development_dependency "pry-byebug"
 end
